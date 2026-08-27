@@ -1,0 +1,60 @@
+.video-card {
+  overflow: hidden;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.video-thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eeeeee;
+}
+
+.play-button {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #008037;
+  color: white;
+  font-size: 20px;
+}
+
+.video-card-content {
+  padding: 18px;
+}
+
+.video-app-name {
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #008037;
+  text-transform: uppercase;
+}
+
+.video-title {
+  margin-bottom: 10px;
+  font-size: 19px;
+  line-height: 1.3;
+}
+
+.video-description {
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.5;
+}
