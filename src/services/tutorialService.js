@@ -1,8 +1,8 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "http://localhost:8080/saathi/api";
 
 export async function getTutorialsByRole(role) {
   const response = await fetch(
-    `${API_BASE_URL}/saathi/api/details/v1`,
+    `${API_BASE_URL}/details/v1`,
     {
       method: "GET",
       headers: {
@@ -14,9 +14,10 @@ export async function getTutorialsByRole(role) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+     console.log("BACKEND RESPONSE:", data);
     throw new Error(
-      data?.message ||
-      data?.error ||
+      data.message ||
+      data.error ||
       "Failed to fetch tutorials"
     );
   }
@@ -27,7 +28,7 @@ export async function getTutorialsByRole(role) {
 
 export async function getVideo(videoId, role) {
   const response = await fetch(
-    `${API_BASE_URL}/saathi/api/v1/${videoId}`,
+    `${API_BASE_URL}/v1/${videoId}`,
     {
       method: "GET",
       headers: {

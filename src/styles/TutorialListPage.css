@@ -89,3 +89,159 @@
     gap: 18px;
   }
 }
+/* ================================
+   SEARCH + FILTER CONTROLS
+================================ */
+
+.tutorial-controls {
+  margin: 28px 0 18px;
+}
+
+/* SEARCH BAR */
+
+.search-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  min-height: 52px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-wrapper:focus-within {
+  border-color: #008037;
+  box-shadow: 0 0 0 3px rgba(0, 128, 55, 0.12);
+}
+
+.search-icon {
+  font-size: 24px;
+  color: #008037;
+  margin-right: 10px;
+  line-height: 1;
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #1f2937;
+  padding: 14px 0;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.clear-search {
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.clear-search:hover {
+  color: #008037;
+}
+
+
+/* ================================
+   APPLICATION FILTER
+================================ */
+
+.filter-section {
+  margin-top: 22px;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 10px;
+}
+
+.application-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-button {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-button:hover {
+  border-color: #008037;
+  color: #008037;
+}
+
+.filter-button.active {
+  background: #008037;
+  border-color: #008037;
+  color: #ffffff;
+}
+
+
+/* ================================
+   RESULT COUNT
+================================ */
+
+.result-count {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+.result-count strong {
+  color: #008037;
+}
+
+
+/* ================================
+   MOBILE RESPONSIVENESS
+================================ */
+
+@media (max-width: 600px) {
+  .tutorial-controls {
+    margin-top: 20px;
+  }
+
+  .search-wrapper {
+    min-height: 48px;
+    padding: 0 12px;
+  }
+
+  .search-input {
+    font-size: 13px;
+  }
+
+  .search-icon {
+    font-size: 20px;
+  }
+
+  .filter-button {
+    padding: 8px 13px;
+    font-size: 13px;
+  }
+
+  .application-filter {
+    gap: 8px;
+  }
+}
