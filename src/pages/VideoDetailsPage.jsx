@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 import { getVideo } from "../services/tutorialService";
 
-import "../styles/VideoDetailsPage.css";
+import "../styles/videoDetailsPage.css";
 
 function VideoDetailsPage() {
   const { videoId } = useParams();
@@ -19,6 +23,26 @@ function VideoDetailsPage() {
   const [videoUrl, setVideoUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [duration, setDuration] = useState("");
+
+  const [feedback, setFeedback] = useState("");
+  const formatDuration = (seconds) => {
+  if (!seconds || !Number.isFinite(seconds)) {
+    return "00:00";
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  return `${String(minutes).padStart(2, "0")}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
+};
+  const formatDate = (date) => {
+  if (!date) return "N/A";
+
+  return new Date(date).toLocaleDateString("en-GB");
+};
 
   useEffect(() => {
     if (!videoId || !role) {
@@ -34,11 +58,16 @@ function VideoDetailsPage() {
         setLoading(true);
         setError("");
 
-        objectUrl = await getVideo(videoId, role);
+        objectUrl = await getVideo(
+          videoId,
+          role
+        );
 
         setVideoUrl(objectUrl);
       } catch (err) {
-        setError(err.message);
+        setError(
+          err.message || "Failed to load video"
+        );
       } finally {
         setLoading(false);
       }
@@ -53,40 +82,26 @@ function VideoDetailsPage() {
     };
   }, [videoId, role]);
 
-
-  const handleFullscreen = async () => {
-    if (!videoRef.current) {
-      return;
-    }
-
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await videoRef.current.requestFullscreen();
-      }
-    } catch (err) {
-      console.error(
-        "Fullscreen failed:",
-        err
-      );
-    }
-  };
-
-
   if (!videoDetails) {
     return (
       <main className="video-details-page">
 
         <div className="video-details-container">
 
-          <h1>Video information unavailable</h1>
-
           <button
-            onClick={() => navigate("/tutorials")}
+            className="details-back-button"
+            onClick={() =>
+              navigate("/tutorials", {
+                state: { role },
+              })
+            }
           >
-            Back to Tutorials
+            ←
           </button>
+
+          <div className="details-error">
+            Video information unavailable
+          </div>
 
         </div>
 
@@ -94,19 +109,12 @@ function VideoDetailsPage() {
     );
   }
 
-
   return (
     <main className="video-details-page">
 
       <div className="video-details-container">
 
-        <button
-  className="back-button"
-  onClick={() => navigate(-1)}
->
-  ← Back to Tutorials
-</button>
-
+        {/* VIDEO */}
 
         <section className="video-player-section">
 
@@ -116,37 +124,34 @@ function VideoDetailsPage() {
             </div>
           )}
 
-
           {!loading && error && (
             <div className="player-status error">
               {error}
             </div>
           )}
 
+          {!loading &&
+            !error &&
+            videoUrl && (
+              <div className="video-player-wrapper">
 
-          {!loading && !error && videoUrl && (
-            <div className="video-player-wrapper">
+                <video
+                  ref={videoRef}
+                  className="video-player"
+                  src={videoUrl}
+                  controls
+                  playsInline
+                  onLoadedMetadata={(e) => {
+                    setDuration(formatDuration(e.target.duration));
+                  }}
+                />
 
-              <video
-                ref={videoRef}
-                className="video-player"
-                src={videoUrl}
-                controls
-                playsInline
-              />
-
-              <button
-                className="fullscreen-button"
-                onClick={handleFullscreen}
-              >
-                {/* ⛶ Fullscreen */}
-              </button>
-
-            </div>
-          )}
+              </div>
+            )}
 
         </section>
 
+        {/* INFORMATION */}
 
         <section className="video-information">
 
@@ -158,9 +163,93 @@ function VideoDetailsPage() {
             {videoDetails.video_title}
           </h1>
 
-          <p className="video-details-description">
-            {videoDetails.video_description}
+          <p className="published-info">
+            Published on {formatDate(videoDetails.created_at)}
+            <span>|</span>
+            {duration} Duration
           </p>
+
+          {/* WHAT YOU WILL LEARN */}
+
+          <div className="learning-box">
+
+            <div className="learning-heading">
+
+              <span className="learning-icon">
+                ♧
+              </span>
+
+              <span>
+                What you’ll learn in this video
+              </span>
+
+            </div>
+
+            <ul>
+
+              <li>
+                How to identify and flag non
+                sellable articles in the system.
+              </li>
+
+              <li>
+                The step-by-step approval workflow
+                for non sellable inventory.
+              </li>
+
+              <li>
+                Key criteria used to classify an
+                article as non sellable.
+              </li>
+
+              <li>
+                How to document reasons and attach
+                supporting evidence for approval.
+              </li>
+
+            </ul>
+
+          </div>
+
+          {/* FEEDBACK */}
+
+          <div className="helpful-box">
+
+            <div className="helpful-title">
+              Was this video helpful?
+            </div>
+
+            <div className="helpful-buttons">
+
+              <button
+                className={`helpful-button yes ${
+                  feedback === "yes"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setFeedback("yes")
+                }
+              >
+                ♡ &nbsp; Yes
+              </button>
+
+              <button
+                className={`helpful-button no ${
+                  feedback === "no"
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setFeedback("no")
+                }
+              >
+                ♧ &nbsp; No
+              </button>
+
+            </div>
+
+          </div>
 
         </section>
 

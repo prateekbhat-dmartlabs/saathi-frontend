@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import VideoCard from "../components/VideoCard";
@@ -17,13 +17,12 @@ function TutorialListPage() {
   const [error, setError] = useState("");
   const [noVideos, setNoVideos] = useState(false);
 
-  // Search state
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Selected application filter
-  const [selectedApp, setSelectedApp] = useState("All");
+  // Selected application
+  const [selectedApplication, setSelectedApplication] =
+    useState(null);
 
-  // Fetch tutorials based on role
   useEffect(() => {
     const loadTutorials = async () => {
       if (!role) {
@@ -41,7 +40,6 @@ function TutorialListPage() {
 
         console.log("Tutorial API Response:", data);
 
-        // No videos found for this role
         if (
           data?.message === "No tutorials found for this role" ||
           !Array.isArray(data) ||
@@ -52,7 +50,6 @@ function TutorialListPage() {
           return;
         }
 
-        // Videos found
         setVideos(data);
       } catch (err) {
         const errorMessage =
@@ -76,33 +73,107 @@ function TutorialListPage() {
     loadTutorials();
   }, [role]);
 
-  // Create unique application list dynamically
-  const applications = [
-    "All",
-    ...new Set(
-      videos
-        .map((video) => video.app_name)
-        .filter(Boolean)
-    ),
-  ];
+  /*
+    Create applications from the backend response.
 
-  // Apply application filter + search filter
-  const filteredVideos = videos.filter((video) => {
-    const search = searchTerm.trim().toLowerCase();
+    Example backend data:
 
-    const matchesApplication =
-      selectedApp === "All" ||
-      video.app_name === selectedApp;
+    [
+      {
+        app_name: "Asset Vista",
+        video_title: "...",
+        video_id: "123"
+      },
+      {
+        app_name: "Asset Vista",
+        video_title: "...",
+        video_id: "456"
+      },
+      {
+        app_name: "Store PI",
+        video_title: "...",
+        video_id: "789"
+      }
+    ]
 
-    const matchesSearch =
-      video.app_name?.toLowerCase().includes(search) ||
-      video.video_title?.toLowerCase().includes(search) ||
-      video.video_description?.toLowerCase().includes(search);
+    This automatically becomes:
 
-    return matchesApplication && matchesSearch;
-  });
+    Asset Vista -> 2 Videos
+    Store PI    -> 1 Video
+  */
 
-  // Navigate to selected video
+  const applications = useMemo(() => {
+    const grouped = {};
+
+    videos.forEach((video) => {
+      const appName = video.app_name;
+
+      if (!appName) {
+        return;
+      }
+
+      if (!grouped[appName]) {
+        grouped[appName] = [];
+      }
+
+      grouped[appName].push(video);
+    });
+
+    return Object.entries(grouped).map(
+      ([name, appVideos]) => ({
+        name,
+        videos: appVideos,
+      })
+    );
+  }, [videos]);
+
+  /*
+    Search applications on first screen
+  */
+
+  const filteredApplications = applications.filter(
+    (application) =>
+      application.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+  );
+
+  /*
+    Videos for selected application
+  */
+
+  const selectedVideos = selectedApplication
+    ? videos.filter(
+        (video) =>
+          video.app_name === selectedApplication
+      )
+    : [];
+
+  /*
+    Search videos on second screen
+  */
+
+  const filteredVideos = selectedVideos.filter(
+    (video) => {
+      const search = searchTerm
+        .trim()
+        .toLowerCase();
+
+      return (
+        video.video_title
+          ?.toLowerCase()
+          .includes(search) ||
+        video.video_description
+          ?.toLowerCase()
+          .includes(search)
+      );
+    }
+  );
+
+  /*
+    Open video details
+  */
+
   const handleVideoClick = (video) => {
     navigate(`/tutorials/${video.video_id}`, {
       state: {
@@ -112,194 +183,234 @@ function TutorialListPage() {
     });
   };
 
-  // Go back to previous page
-  const handleBack = () => {
-    navigate(-1);
-  };
+  /*
+    Loading
+  */
 
-  // Missing role
-  if (!role) {
+  if (loading) {
     return (
       <main className="tutorial-page">
-        <div className="tutorial-container tutorial-status">
-          <h1>Role not found</h1>
-
-          <p>
-            Please return to login and select your role.
-          </p>
-
-          <button onClick={() => navigate("/login")}>
-            Go to Login
-          </button>
+        <div className="mobile-app">
+          <div className="loading-screen">
+            Loading...
+          </div>
         </div>
       </main>
     );
   }
 
-  return (
-    <main className="tutorial-page">
-      <div className="tutorial-container">
+  /*
+    Missing role
+  */
 
-        {/* Header */}
-        <section className="tutorial-header">
-          <div>
-            <p className="tutorial-label">
-              AVAILABLE TUTORIALS
+  if (!role) {
+    return (
+      <main className="tutorial-page">
+        <div className="mobile-app">
+          <div className="status-screen">
+            <h2>Role not found</h2>
+
+            <p>
+              Please return to login and select your role.
             </p>
 
-            <h1>
-              Tutorials for {role}
-            </h1>
-
-            <p className="tutorial-subtitle">
-              Select a tutorial to start learning.
-            </p>
+            <button
+              onClick={() => navigate("/login")}
+            >
+              Go to Login
+            </button>
           </div>
+        </div>
+      </main>
+    );
+  }
 
-          <span className="role-badge">
-            {role}
-          </span>
-        </section>
+  /*
+    Backend error
+  */
 
-        {/* Search and Application Filter */}
-        {!loading && !error && !noVideos && (
-          <section className="tutorial-controls">
+  if (error) {
+    return (
+      <main className="tutorial-page">
+        <div className="mobile-app">
+          <div className="status-screen">
+            <h2>Unable to load tutorials</h2>
 
-            {/* Search */}
-            <div className="search-wrapper">
-              <span className="search-icon">⌕</span>
+            <p>{error}</p>
 
-              <input
-                type="text"
-                placeholder="Search by application, tutorial title or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-
-              {searchTerm && (
-                <button
-                  className="clear-search"
-                  onClick={() => setSearchTerm("")}
-                  aria-label="Clear search"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-
-            {/* Application Filter */}
-            <div className="filter-section">
-              <p className="filter-label">
-                Filter by Application
-              </p>
-
-              <div className="application-filter">
-                {applications.map((app) => (
-                  <button
-                    key={app}
-                    onClick={() => setSelectedApp(app)}
-                    className={`filter-button ${
-                      selectedApp === app ? "active" : ""
-                    }`}
-                  >
-                    {app}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-          </section>
-        )}
-
-        {/* Result Count */}
-        {!loading &&
-          !error &&
-          !noVideos &&
-          videos.length > 0 && (
-            <div className="result-count">
-              Showing{" "}
-              <strong>{filteredVideos.length}</strong>{" "}
-              of <strong>{videos.length}</strong>{" "}
-              tutorials
-            </div>
-          )}
-
-        {/* Loading */}
-        {loading && (
-          <div className="tutorial-status">
-            Loading tutorials...
+            <button
+              onClick={() => navigate("/login")}
+            >
+              Back to Login
+            </button>
           </div>
-        )}
+        </div>
+      </main>
+    );
+  }
 
-        {/* No Videos for Role */}
-        {!loading && noVideos && (
-          <div className="tutorial-status">
+  /*
+    No videos
+  */
+
+  if (noVideos) {
+    return (
+      <main className="tutorial-page">
+        <div className="mobile-app">
+          <div className="status-screen">
             <h2>No tutorials available</h2>
 
             <p>
               No active tutorials were found for this role.
             </p>
-
-            <button onClick={handleBack}>
-              ← Back
-            </button>
           </div>
-        )}
+        </div>
+      </main>
+    );
+  }
 
-        {/* Actual Error */}
-        {!loading && error && !noVideos && (
-          <div className="tutorial-status error">
-            <h2>Unable to load tutorials</h2>
+  /*
+    ---------------------------------------
+    SCREEN 2
+    APPLICATION VIDEOS
+    ---------------------------------------
+  */
 
-            <p>{error}</p>
+  if (selectedApplication) {
+    return (
+      <main className="tutorial-page">
+        <div className="mobile-app">
 
-            <button onClick={handleBack}>
-              ← Back
+          <header className="mobile-header">
+
+            <button
+              className="back-icon"
+              onClick={() => {
+                setSelectedApplication(null);
+                setSearchTerm("");
+              }}
+            >
+              ←
             </button>
+
+            <span className="header-green-title">
+              {selectedApplication}
+            </span>
+
+          </header>
+
+          <div className="mobile-search">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(event) =>
+                setSearchTerm(event.target.value)
+              }
+            />
+
+            <span className="mobile-search-icon">
+              ⌕
+            </span>
           </div>
-        )}
 
-        {/* Video Grid */}
-        {!loading &&
-          !error &&
-          !noVideos &&
-          filteredVideos.length > 0 && (
-            <section className="video-grid">
-              {filteredVideos.map((video) => (
-                <VideoCard
-                  key={video.video_id}
-                  video={video}
-                  onVideoClick={handleVideoClick}
-                />
-              ))}
-            </section>
-          )}
+          <section className="mobile-video-list">
 
-        {/* No Search / Filter Results */}
-        {!loading &&
-          !error &&
-          !noVideos &&
-          videos.length > 0 &&
-          filteredVideos.length === 0 && (
-            <div className="tutorial-status">
-              <h2>No matching tutorials found</h2>
+            {filteredVideos.map((video) => (
+              <VideoCard
+                key={video.video_id}
+                video={video}
+                onVideoClick={handleVideoClick}
+              />
+            ))}
 
-              <p>
-                Try changing your search or selecting a
-                different application.
-              </p>
+            {filteredVideos.length === 0 && (
+              <div className="empty-search">
+                No videos found
+              </div>
+            )}
 
+          </section>
+
+        </div>
+      </main>
+    );
+  }
+
+  /*
+    ---------------------------------------
+    SCREEN 1
+    MY APPLICATION
+    ---------------------------------------
+  */
+
+  return (
+    <main className="tutorial-page">
+      <div className="mobile-app">
+
+        <h1 className="my-application-title">
+          My Application
+        </h1>
+
+        <div className="mobile-search">
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(event) =>
+              setSearchTerm(event.target.value)
+            }
+          />
+
+          <span className="mobile-search-icon">
+            ⌕
+          </span>
+        </div>
+
+        <section className="application-list">
+
+          {filteredApplications.map(
+            (application) => (
               <button
+                className="application-row"
+                key={application.name}
                 onClick={() => {
+                  setSelectedApplication(
+                    application.name
+                  );
+
                   setSearchTerm("");
-                  setSelectedApp("All");
                 }}
               >
-                Clear Filters
+                <span className="application-name">
+                  {application.name}
+                </span>
+
+                <span className="application-right">
+
+                  <span className="video-count">
+                    {String(
+                      application.videos.length
+                    ).padStart(2, "0")}{" "}
+                    Videos
+                  </span>
+
+                  <span className="application-arrow">
+                    ›
+                  </span>
+
+                </span>
               </button>
+            )
+          )}
+
+          {filteredApplications.length === 0 && (
+            <div className="empty-search">
+              No applications found
             </div>
           )}
+
+        </section>
 
       </div>
     </main>

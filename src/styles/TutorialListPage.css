@@ -1,247 +1,484 @@
 .tutorial-page {
+  width: 100%;
   min-height: 100vh;
+
+  background: #f6f7f9;
+
   padding: 40px 24px;
 }
 
-.tutorial-container {
+.mobile-app {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1180px;
+
+  min-height: calc(100vh - 80px);
+
   margin: 0 auto;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.05);
+
+  overflow: hidden;
 }
 
-.tutorial-header {
+/* ==========================
+   APPLICATION HEADER
+========================== */
+
+.my-application-title {
+  margin: 0;
+
+  padding: 30px 32px 22px;
+
+  color: #168018;
+
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700;
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+.mobile-header {
+  min-height: 70px;
+
   display: flex;
+  align-items: center;
+
+  padding: 0 32px;
+
+  gap: 12px;
+
+  border-bottom: 1px solid #e7eaed;
+}
+
+.back-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f2f7f3;
+
+  color: #168018;
+
+  font-size: 24px;
+
+  transition: background 0.2s ease;
+}
+
+.back-icon:hover {
+  background: #e3efe5;
+}
+
+.header-green-title {
+  color: #168018;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ==========================
+   SEARCH
+========================== */
+
+.mobile-search {
+  position: relative;
+
+  width: min(100%, 600px);
+
+  margin: 0 32px 28px;
+}
+
+.my-application-title + .mobile-search {
+  margin-bottom: 28px;
+}
+
+.mobile-header + .mobile-search {
+  margin-top: 24px;
+}
+
+.mobile-search input {
+  width: 100%;
+  height: 48px;
+
+  padding: 0 48px 0 16px;
+
+  border: 1px solid #cdd2d7;
+  border-radius: 7px;
+
+  outline: none;
+
+  background: #ffffff;
+  color: #252b3a;
+
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.mobile-search input::placeholder {
+  color: #9aa1a9;
+}
+
+.mobile-search input:focus {
+  border-color: #168018;
+
+  box-shadow:
+    0 0 0 3px rgba(22, 128, 24, 0.08);
+}
+
+.mobile-search-icon {
+  position: absolute;
+
+  right: 16px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #69727f;
+
+  font-size: 22px;
+}
+
+/* ==========================
+   APPLICATION LIST
+========================== */
+
+.application-list {
+  width: 100%;
+
+  border-top: 1px solid #dfe8ff;
+}
+
+.application-row {
+  width: 100%;
+  min-height: 78px;
+
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-end;
+
   gap: 20px;
-  margin-bottom: 32px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #dddddd;
+
+  padding: 0 32px;
+
+  border: none;
+  border-bottom: 1px solid #dfe8ff;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  transition:
+    background 0.2s ease,
+    padding 0.2s ease;
 }
 
-.tutorial-label {
-  margin-bottom: 8px;
-  font-size: 12px;
+.application-row:hover {
+  background: #f8faff;
+}
+
+.application-name {
+  min-width: 0;
+
+  color: #282e3d;
+
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #666666;
-}
 
-.tutorial-header h1 {
-  margin-bottom: 8px;
-  font-size: clamp(28px, 4vw, 42px);
-}
-
-.tutorial-subtitle {
-  color: #666666;
-}
-
-.role-badge {
-  padding: 8px 14px;
-  border-radius: 20px;
-  background: #008037;
-  color: white;
-  font-size: 13px;
-  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
-}
+.application-right {
+  flex-shrink: 0;
 
-.tutorial-status {
-  padding: 60px 20px;
-  text-align: center;
-  color: #666666;
-}
-
-.tutorial-status.error {
-  color: #c00000;
-}
-
-@media (max-width: 1200px) {
-  .video-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .video-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .tutorial-page {
-    padding: 28px 16px;
-  }
-
-  .tutorial-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .video-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-}
-/* ================================
-   SEARCH + FILTER CONTROLS
-================================ */
-
-.tutorial-controls {
-  margin: 28px 0 18px;
-}
-
-/* SEARCH BAR */
-
-.search-wrapper {
-  width: 100%;
   display: flex;
   align-items: center;
-  position: relative;
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  min-height: 52px;
-  padding: 0 14px;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  gap: 16px;
 }
 
-.search-wrapper:focus-within {
-  border-color: #008037;
-  box-shadow: 0 0 0 3px rgba(0, 128, 55, 0.12);
-}
+.video-count {
+  min-width: 95px;
+  height: 36px;
 
-.search-icon {
-  font-size: 24px;
-  color: #008037;
-  margin-right: 10px;
-  line-height: 1;
-}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-.search-input {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 15px;
-  color: #1f2937;
-  padding: 14px 0;
-}
+  padding: 0 12px;
 
-.search-input::placeholder {
-  color: #9ca3af;
-}
+  border-radius: 6px;
 
-.clear-search {
-  border: none;
-  background: transparent;
-  font-size: 24px;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 0 4px;
-  line-height: 1;
-}
+  background: #e8efff;
+  color: #0962ff;
 
-.clear-search:hover {
-  color: #008037;
-}
-
-
-/* ================================
-   APPLICATION FILTER
-================================ */
-
-.filter-section {
-  margin-top: 22px;
-}
-
-.filter-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 10px;
-}
-
-.application-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.filter-button {
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #374151;
-  padding: 9px 16px;
-  border-radius: 999px;
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+
+  white-space: nowrap;
 }
 
-.filter-button:hover {
-  border-color: #008037;
-  color: #008037;
+.application-arrow {
+  color: #7c8590;
+
+  font-size: 28px;
+  font-weight: 300;
 }
 
-.filter-button.active {
-  background: #008037;
-  border-color: #008037;
+/* ==========================
+   VIDEO LIST
+========================== */
+
+.mobile-video-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 20px;
+
+  padding: 0 32px 32px;
+}
+
+.mobile-video-list .video-card {
+  width: 100%;
+}
+
+/* ==========================
+   EMPTY / STATUS
+========================== */
+
+.empty-search {
+  padding: 50px 20px;
+
+  text-align: center;
+
+  color: #858b95;
+
+  font-size: 15px;
+}
+
+.loading-screen,
+.status-screen {
+  min-height: 500px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px;
+
+  text-align: center;
+
+  color: #555555;
+}
+
+.status-screen h2 {
+  margin: 0 0 10px;
+
+  color: #252b3a;
+
+  font-size: 22px;
+}
+
+.status-screen p {
+  margin: 0 0 20px;
+
+  color: #69727f;
+}
+
+.status-screen button {
+  min-height: 42px;
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #168018;
   color: #ffffff;
+
+  font-weight: 600;
 }
 
+/* ==========================
+   LARGE TABLET
+========================== */
 
-/* ================================
-   RESULT COUNT
-================================ */
+@media (max-width: 1100px) {
+  .tutorial-page {
+    padding: 30px 20px;
+  }
 
-.result-count {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 18px;
+  .mobile-app {
+    min-height: calc(100vh - 60px);
+  }
+
+  .mobile-video-list {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .my-application-title {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .mobile-search {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+
+  .application-row {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }
 
-.result-count strong {
-  color: #008037;
+/* ==========================
+   TABLET
+========================== */
+
+@media (max-width: 768px) {
+  .tutorial-page {
+    padding: 20px 14px;
+  }
+
+  .mobile-app {
+    min-height: calc(100vh - 40px);
+
+    border-radius: 10px;
+  }
+
+  .mobile-video-list {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .my-application-title {
+    padding: 24px 18px 18px;
+  }
+
+  .mobile-search {
+    width: auto;
+
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+
+  .application-row {
+    min-height: 70px;
+
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .mobile-header {
+    padding: 0 18px;
+  }
 }
 
+/* ==========================
+   MOBILE
+========================== */
 
-/* ================================
-   MOBILE RESPONSIVENESS
-================================ */
-
-@media (max-width: 600px) {
-  .tutorial-controls {
-    margin-top: 20px;
+@media (max-width: 480px) {
+  .tutorial-page {
+    padding: 0;
   }
 
-  .search-wrapper {
-    min-height: 48px;
-    padding: 0 12px;
+  .mobile-app {
+    min-height: 100vh;
+
+    border-radius: 0;
+
+    box-shadow: none;
   }
 
-  .search-input {
-    font-size: 13px;
+  .my-application-title {
+    padding: 22px 16px 16px;
+
+    font-size: 21px;
   }
 
-  .search-icon {
-    font-size: 20px;
+  .mobile-search {
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 20px;
   }
 
-  .filter-button {
-    padding: 8px 13px;
-    font-size: 13px;
+  .mobile-search input {
+    height: 46px;
   }
 
-  .application-filter {
+  .mobile-header {
+    min-height: 58px;
+
+    padding: 0 16px;
+  }
+
+  .header-green-title {
+    font-size: 18px;
+  }
+
+  .application-row {
+    min-height: 68px;
+
+    gap: 10px;
+
+    padding-left: 16px;
+    padding-right: 12px;
+  }
+
+  .application-name {
+    font-size: 14px;
+  }
+
+  .application-right {
     gap: 8px;
+  }
+
+  .video-count {
+    min-width: 82px;
+    height: 32px;
+
+    padding: 0 8px;
+
+    font-size: 12px;
+  }
+
+  .application-arrow {
+    font-size: 24px;
+  }
+
+  .mobile-video-list {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 20px;
   }
 }

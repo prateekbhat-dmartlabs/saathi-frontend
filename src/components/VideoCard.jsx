@@ -7,20 +7,32 @@ function VideoCard({ video, onVideoClick }) {
       onClick={() => onVideoClick(video)}
     >
 
-      <div className="video-thumbnail">
+      <div
+        className="video-thumbnail"
+        style={
+          video.title_image
+            ? {
+                backgroundImage: `url(${video.title_image})`,
+              }
+            : undefined
+        }
+      >
+
+        <div className="video-thumbnail-overlay" />
 
         <div className="play-button">
           ▶
         </div>
 
+        {video.duration && (
+          <div className="video-duration">
+            {video.duration}
+          </div>
+        )}
+
       </div>
 
-
       <div className="video-card-content">
-
-        <p className="video-app-name">
-          {video.app_name}
-        </p>
 
         <h2 className="video-title">
           {video.video_title}
